@@ -1,0 +1,109 @@
+import simplegui
+import random
+
+# Global Variables
+current_room = "Room 1: Inequality"
+player_health = 100
+inventory = []
+
+ROOMS = {
+    "Room 1: Inequality": "You are in a city with a lot of inequality. What will you do?",
+    "Room 2: Conflict": "A major conflict has erupted. How will you handle it?",
+    "Room 3: Environmental Crisis": "The environment is in crisis. What will you do to help?",
+    "Room 4: Mental Health": "A friend is struggling with mental health. How will you support them?",
+    "Final Room: Peace": "You have made it! Can you bring true peace to society?"
+}
+
+# Graphics setup
+background_image = simplegui.load_image("https://via.placeholder.com/600x400/ADD8E6/000000?text=Background+Image")  # Placeholder URL for background
+health_bar_image = simplegui.load_image("https://via.placeholder.com/100x20/00FF00/000000?text=Health")  # Placeholder health bar
+inventory_image = simplegui.load_image("https://via.placeholder.com/40x40/FFFF00/000000?text=Inventory")  # Placeholder inventory icon
+
+# Functions
+def solve_inequality():
+    global player_health
+    result = random.choice(["success", "failure"])
+    if result == "success":
+        player_health += 10
+        room_description.set_text("You solved the inequality issue! Health +10.")
+    else:
+        player_health -= 10
+        room_description.set_text("Inequality issue unresolved. Health -10.")
+    update_game_state()
+
+def negotiate_peace():
+    global player_health
+    result = random.choice(["success", "failure"])
+    if result == "success":
+        player_health += 20
+        room_description.set_text("The peace negotiation was successful! Health +20.")
+    else:
+        player_health -= 20
+        room_description.set_text("The negotiation failed. Health -20.")
+    update_game_state()
+
+def help_environment():
+    global player_health
+    result = random.choice(["success", "failure"])
+    if result == "success":
+        player_health += 15
+        room_description.set_text("You helped the environment! Health +15.")
+    else:
+        player_health -= 5
+        room_description.set_text("Your environmental efforts were not enough. Health -5.")
+    update_game_state()
+
+def support_mental_health():
+    global player_health
+    result = random.choice(["success", "failure"])
+    if result == "success":
+        player_health += 25
+        room_description.set_text("You supported mental health! Health +25.")
+    else:
+        player_health -= 10
+        room_description.set_text("You were unable to help. Health -10.")
+    update_game_state()
+
+def update_game_state():
+    health_label.set_text(f"Health: {player_health}")
+    inventory_label.set_text(f"Inventory: {', '.join(inventory)}")
+    if player_health <= 0:
+        end_game("You lost! Your health reached 0.")
+    elif current_room == "Final Room: Peace":
+        end_game("You won! You have achieved peace.")
+
+def end_game(message):
+    room_description.set_text(message)
+
+def draw(canvas):
+    # Draw background
+    canvas.draw_image(background_image, (300, 200), (600, 400), (300, 200), (600, 400))
+    
+    # Draw health bar
+    canvas.draw_image(health_bar_image, (50, 10), (100, 20), (50, 50), (100, 20))
+    
+    # Draw inventory icon
+    if inventory:
+        canvas.draw_image(inventory_image, (20, 20), (40, 40), (500, 350), (40, 40))
+    
+    # Draw room description
+    canvas.draw_text(current_room, (10, 20), 20, "White")
+
+# SimpleGUI setup
+frame = simplegui.create_frame("PeaceRun", 600, 400)
+
+# Labels
+room_description = frame.add_label(ROOMS[current_room])
+health_label = frame.add_label(f"Health: {player_health}")
+inventory_label = frame.add_label(f"Inventory: {', '.join(inventory)}")
+
+# Action Buttons
+frame.add_button("Solve the Inequality", solve_inequality)
+frame.add_button("Negotiate Peace", negotiate_peace)
+frame.add_button("Help the Environment", help_environment)
+frame.add_button("Support Mental Health", support_mental_health)
+
+# Draw function
+frame.set_draw_handler(draw)
+
+frame.start()
